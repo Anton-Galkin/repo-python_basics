@@ -5,11 +5,18 @@ from decimal import Decimal
 def currency_rates(*args):
     def course():
         return Decimal('.'.join(val[1][1: -2].split(',')))
+    val_lst = ['AUD', 'AZN', 'GBP', 'AMD', 'BYN', 'BGN', 'BRL', 'HUF', 'HKD', 'DKK', 'USD', 'EUR', 'INR', 'KZT', 'CAD',
+               'KGS', 'CNY', 'MDL', 'NOK', 'PLN', 'RON', 'XDR', 'SGD', 'TJS', 'TRY', 'TMT', 'UZS', 'UAH', 'CZK', 'SEK',
+               'CHF', 'ZAR', 'KRW', 'JPY']
 
-    response = get('http://www.cbr.ru/scripts/XML_daily.asp')
-    encodings = utils.get_encoding_from_headers(response.headers)
-    content = response.content.decode(encoding=encodings).lower()
+    for i in args:
+        if str(i).upper() not in val_lst:
+            return None
 
+    response = get('http://www.cbr.ru/scripts/XML_daily.asp')  # Можно сделать проверку и при ответе != <Response [200]>
+    encodings = utils.get_encoding_from_headers(response.headers)  # вывести сообщение напр. "Нет ответа от сервера.
+    content = response.content.decode(encoding=encodings).lower()  # Проверьте подключение к интеренету".
+    # print(response)
     data_start = content.find('date="'.lower())  # дата удобно получается из самого списка,
     data_end = content.find('" ', data_start)    # можно обойтись и без модуля datetime
     data_str = content[data_start + 6: data_end]
